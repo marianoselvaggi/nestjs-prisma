@@ -12,13 +12,21 @@ import {
 import { PersonsService } from './persons.service';
 import { CreatePersonDto } from './dto/create-person.dto';
 import { UpdatePersonDto } from './dto/update-person.dto';
-import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiCreatedResponse,
+  ApiExtraModels,
+  ApiOkResponse,
+  ApiTags,
+  getSchemaPath,
+} from '@nestjs/swagger';
 import { PersonEntity } from './entities/person.entity';
 import { AuthGuard } from '@nestjs/passport';
 import { ConnectionArgsDTO } from '../page/connection-args-dto';
+import { PageEntity } from 'src/page/page.entity';
 
 @ApiTags('persons')
 @Controller('persons')
+@ApiExtraModels(PageEntity)
 export class PersonsController {
   constructor(private readonly personsService: PersonsService) {}
 
@@ -36,6 +44,28 @@ export class PersonsController {
   }
 
   @Get('/page')
+  @ApiOkResponse({
+    schema: {
+      allOf: [
+        { $ref: getSchemaPath(PageEntity) },
+        {
+          properties: {
+            edge: {
+              type: 'array',
+              items: {
+                type: 'object',
+                required: ['cursor', 'node'],
+                properties: {
+                  cursor: { type: 'string' },
+                  node: { type: 'object', $ref: getSchemaPath(PersonEntity) },
+                },
+              },
+            },
+          },
+        },
+      ],
+    },
+  })
   async findAllPage(@Query() connectionArgs: ConnectionArgsDTO) {
     return this.personsService.findAllPage(connectionArgs);
   }
