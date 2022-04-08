@@ -1,28 +1,52 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreatePersonDto } from './dto/create-person.dto';
+import { CreatePersonDto, CreateEmailDTO } from './dto/create-person.dto';
 import { UpdatePersonDto } from './dto/update-person.dto';
 import { DbService } from '../db/db.service';
 import { Person } from '@prisma/client';
+import { findManyCursorConnection } from '@devoxa/prisma-relay-cursor-connection';
+import { ConnectionArgsDTO } from '../page/connection-args-dto';
 
 @Injectable()
 export class PersonsService {
   constructor(private readonly dbService: DbService) {}
 
-  async create(createPersonDto: CreatePersonDto): Promise<Person> {
-    return await this.dbService.person.create({
-      data: createPersonDto,
-    });
-  }
-
-  async findAll(): Promise<Person[]> {
-    return await this.dbService.person.findMany({
+  create(createPersonDto: CreatePersonDto): Promise<Person> {
+    const data = {
+      ...createPersonDto,
+      emails: {
+        create: createPersonDto.emails.map((email: CreateEmailDTO) => {
+          return {
+            email: email.email,
+          };
+        }),
+      },
+    };
+    return this.dbService.person.create({
+      data: data,
       include: {
         emails: true,
       },
     });
   }
 
-  async findOne(id: number): Promise<Person> {
+  findAll(): Promise<Person[]> {
+    return this.dbService.person.findMany({
+      include: {
+        emails: true,
+      },
+    });
+  }
+
+  async findAllPage(connectionArgs: ConnectionArgsDTO) {
+    const result = await findManyCursorConnection(
+      (args) => this.dbService.person.findMany(args),
+      () => this.dbService.person.count(),
+      connectionArgs,
+    );
+    return result;
+  }
+
+  async findOne(id: string): Promise<Person> {
     const person = await this.dbService.person.findUnique({
       where: {
         id,
@@ -37,7 +61,7 @@ export class PersonsService {
     return person;
   }
 
-  async update(id: number, updatePersonDto: UpdatePersonDto): Promise<Person> {
+  async update(id: string, updatePersonDto: UpdatePersonDto): Promise<Person> {
     const person = await this.dbService.person.findUnique({
       where: {
         id,
@@ -46,7 +70,7 @@ export class PersonsService {
     if (!person) {
       throw new NotFoundException('The person does not exist');
     }
-    return await this.dbService.person.update({
+    return this.dbService.person.update({
       where: {
         id,
       },
@@ -54,7 +78,7 @@ export class PersonsService {
     });
   }
 
-  async remove(id: number): Promise<Person> {
+  async remove(id: string): Promise<Person> {
     const person = await this.dbService.person.findUnique({
       where: {
         id,
@@ -63,7 +87,7 @@ export class PersonsService {
     if (!person) {
       throw new NotFoundException('The person does not exist');
     }
-    return await this.dbService.person.delete({
+    return this.dbService.person.delete({
       where: {
         id,
       },

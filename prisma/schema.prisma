@@ -6,20 +6,20 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
 model Person {
-  id Int @default(autoincrement()) @id
+  id String @id @default(uuid())
   name String
   age Int
   emails Email[]
 }
 
 model Email {
-  id Int @default(autoincrement()) @id
+  id String @id @default(uuid())
   email String @unique
   person Person @relation(fields: [personId], references: [id])
-  personId Int
+  personId String
 }

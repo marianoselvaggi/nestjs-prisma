@@ -1,6 +1,14 @@
-import { IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { IsEmail, IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
+import { ApiExtraModels, ApiProperty } from '@nestjs/swagger';
 
+export class CreateEmailDTO {
+  @ApiProperty({ required: true })
+  @IsNotEmpty()
+  @IsEmail()
+  email: string;
+}
+
+@ApiExtraModels(CreateEmailDTO)
 export class CreatePersonDto {
   @ApiProperty({ required: true })
   @IsNotEmpty()
@@ -11,6 +19,7 @@ export class CreatePersonDto {
   @IsNotEmpty()
   age: number;
 
+  @ApiProperty({ required: false })
   @IsOptional()
-  emails: string[];
+  emails?: CreateEmailDTO[];
 }

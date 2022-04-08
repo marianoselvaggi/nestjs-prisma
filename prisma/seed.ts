@@ -4,11 +4,12 @@ const persons = [
   {
     name: 'user1',
     age: 10,
-    emails: ['sadsdaaaa11@sad.com'],
+    emails: ['sadsdaaaa11@sad.com', 'sda@sad.com'],
   },
   {
     name: 'user2',
     age: 10,
+    emails: ['sdadas@2sada.com'],
   },
 ];
 
@@ -27,9 +28,7 @@ async function main() {
       data: {
         ...person,
         emails: {
-          createMany: {
-            data: emailsValues,
-          },
+          create: emailsValues,
         },
       },
     });
