@@ -1,4 +1,10 @@
-import { BadRequestException, Body, Controller, Post } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Post,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 
 @Controller('auth')
@@ -28,7 +34,11 @@ export class AuthController {
     try {
       return await this.authService.authenticateUser(authenticateRequest);
     } catch (err) {
-      throw new BadRequestException(err.message);
+      if (err.code === 'NotAuthorizedException') {
+        throw new UnauthorizedException(err.code, err.message);
+      } else {
+        throw new BadRequestException(err, err.message);
+      }
     }
   }
 
@@ -41,5 +51,34 @@ export class AuthController {
     } catch (e) {
       throw new BadRequestException(e.message);
     }
+  }
+
+  @Post('forgot-password')
+  async forgotPassword(@Body() user: { username: string }) {
+    return this.authService.forgotPassword(user);
+  }
+
+  @Post('confirm-password')
+  async confirmForgotPassword(
+    @Body()
+    user: {
+      username: string;
+      confirmationCode: string;
+      newPassword: string;
+    },
+  ) {
+    return this.authService.confirmForgotPassword(user);
+  }
+
+  @Post('reset-password')
+  async resetPassword(
+    @Body()
+    user: {
+      username: string;
+      oldPassword: string;
+      newPassword: string;
+    },
+  ) {
+    return this.authService.resetPassword(user);
   }
 }

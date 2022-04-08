@@ -90,4 +90,89 @@ export class AuthService {
       );
     });
   }
+
+  forgotPassword(user: { username: string }) {
+    const { username } = user;
+
+    const userData = {
+      Username: username,
+      Pool: this.userPool,
+    };
+    const cognitoUser = new CognitoUser(userData);
+    return new Promise((resolve, reject) => {
+      cognitoUser.forgotPassword({
+        onSuccess: (result) => {
+          resolve(result);
+        },
+        onFailure: (err) => {
+          reject(err);
+        },
+      });
+    });
+  }
+
+  confirmForgotPassword(user: {
+    username: string;
+    confirmationCode: string;
+    newPassword: string;
+  }) {
+    const { username, confirmationCode, newPassword } = user;
+
+    const userData = {
+      Username: username,
+      Pool: this.userPool,
+    };
+    const cognitoUser = new CognitoUser(userData);
+
+    return new Promise((resolve, reject) => {
+      cognitoUser.confirmPassword(confirmationCode, newPassword, {
+        onSuccess: (result) => {
+          resolve(result);
+        },
+        onFailure: (err) => {
+          reject(err);
+        },
+      });
+    });
+  }
+
+  async resetPassword(user: {
+    username: string;
+    oldPassword: string;
+    newPassword: string;
+  }) {
+    const { username, oldPassword, newPassword } = user;
+
+    const authenticationDetails = new AuthenticationDetails({
+      Username: username,
+      Password: oldPassword,
+    });
+    const userData = {
+      Username: username,
+      Pool: this.userPool,
+    };
+
+    const newUser = new CognitoUser(userData);
+    return new Promise((resolve, reject) => {
+      newUser.authenticateUser(authenticationDetails, {
+        onSuccess: () => {
+          newUser.changePassword(
+            oldPassword,
+            newPassword,
+            function (err, result) {
+              if (err) {
+                console.log(err);
+                reject(err);
+              } else {
+                resolve(result);
+              }
+            },
+          );
+        },
+        onFailure: (err) => {
+          reject(err);
+        },
+      });
+    });
+  }
 }

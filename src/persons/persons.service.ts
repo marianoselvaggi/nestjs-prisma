@@ -10,7 +10,7 @@ import { ConnectionArgsDTO } from '../page/connection-args-dto';
 export class PersonsService {
   constructor(private readonly dbService: DbService) {}
 
-  create(createPersonDto: CreatePersonDto): Promise<Person> {
+  async create(createPersonDto: CreatePersonDto): Promise<Person> {
     const data = {
       ...createPersonDto,
       emails: {
@@ -21,7 +21,7 @@ export class PersonsService {
         }),
       },
     };
-    return this.dbService.person.create({
+    return await this.dbService.person.create({
       data: data,
       include: {
         emails: true,
