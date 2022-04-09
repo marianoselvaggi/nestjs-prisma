@@ -1,4 +1,5 @@
-FROM node:12.15.0-alpine
+ARG REPO=836347527647.dkr.ecr.us-east-1.amazonaws.com
+FROM ${REPO}/node:12.15.0-alpine
 
 ENV NODE_OPTIONS='--max_old_space_size=6144'
 
