@@ -19,7 +19,7 @@ phases:
       - docker build -t nestjs-app .
       - docker tag nestjs-app:latest 836347527647.dkr.ecr.us-east-1.amazonaws.com/nestjs-app:latest
   
-  post-build:
+  post_build:
     commands:
       - echo Pushing to ECT
       - docker push 836347527647.dkr.ecr.us-east-1.amazonaws.com/nestjs-app:latest
