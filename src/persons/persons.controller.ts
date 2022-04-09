@@ -22,7 +22,7 @@ import {
 import { PersonEntity } from './entities/person.entity';
 import { AuthGuard } from '@nestjs/passport';
 import { ConnectionArgsDTO } from '../page/connection-args-dto';
-import { PageEntity } from 'src/page/page.entity';
+import { PageEntity } from '../page/page.entity';
 
 @ApiTags('persons')
 @Controller('persons')
