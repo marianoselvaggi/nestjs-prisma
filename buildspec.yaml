@@ -14,3 +14,12 @@ phases:
     commands:
       - echo running tests e2e
       - npm run test:e2e
+      - echo building and tagging docker image
+      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 836347527647.dkr.ecr.us-east-1.amazonaws.com
+      - docker build -t nestjs-app .
+      - docker tag nestjs-app:latest 836347527647.dkr.ecr.us-east-1.amazonaws.com/nestjs-app:latest
+  
+  post-build:
+    commands:
+      - echo Pushing to ECT
+      - docker push 836347527647.dkr.ecr.us-east-1.amazonaws.com/nestjs-app:latest
