@@ -17,6 +17,8 @@ COPY . .
 # This command does a clean npm i (used by CI)
 # RUN npm ci
 
+RUN npx prisma generate
+
 # Build our app for production
 RUN npm run build
 
