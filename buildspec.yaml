@@ -12,8 +12,11 @@ phases:
 
   build:
     commands:
+      - echo Build started on `date`
       - echo running tests e2e
       - npm run test:e2e
+      - echo getting env variables from Parameters Store
+      - aws ssm get-parameter --name nestjs-app --with-decryption --query Parameter.Value --output text >> .env
       - echo building and tagging docker image
       - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 836347527647.dkr.ecr.us-east-1.amazonaws.com
       - docker build -t nestjs-app .
@@ -21,7 +24,7 @@ phases:
   
   post_build:
     commands:
-      - echo Pushing to ECT
+      - echo Pushing to ECR
       - docker push 836347527647.dkr.ecr.us-east-1.amazonaws.com/nestjs-app:latest
       - printf '[{"name":"nestjs-app","imageUri":"836347527647.dkr.ecr.us-east-1.amazonaws.com/nestjs-app:latest"}]' > imagedefinitions.json
 
