@@ -23,3 +23,9 @@ phases:
     commands:
       - echo Pushing to ECT
       - docker push 836347527647.dkr.ecr.us-east-1.amazonaws.com/nestjs-app:latest
+      - prinf '[{"name":"nestjs-app","imageUri":"836347527647.dkr.ecr.us-east-1.amazonaws.com/nestjs-app:latest"}]' > imagedefinitinos.json
+
+artifacts:
+  files:
+    - imagedefinitions.json
+
