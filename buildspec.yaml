@@ -26,7 +26,7 @@ phases:
     commands:
       - echo Pushing to ECR
       - docker push 836347527647.dkr.ecr.us-east-1.amazonaws.com/nestjs-app:latest
-      - printf '[{"name":"nestjs-app","imageUri":"836347527647.dkr.ecr.us-east-1.amazonaws.com/nestjs-app:latest"}]' > imagedefinitions.json
+      - printf '[{"name":"nestjs-api","imageUri":"836347527647.dkr.ecr.us-east-1.amazonaws.com/nestjs-app:latest"}]' > imagedefinitions.json
 
 artifacts:
   files:
