@@ -33,6 +33,8 @@ export class PersonsService {
     return this.dbService.person.findMany({
       include: {
         emails: true,
+        tasks: true,
+        profile: true,
       },
     });
   }

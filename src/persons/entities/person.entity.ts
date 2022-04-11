@@ -13,4 +13,10 @@ export class PersonEntity implements Person {
 
   @ApiProperty()
   emails: string[];
+
+  @ApiProperty()
+  createdAt: Date;
+
+  @ApiProperty()
+  updadeAt: Date;
 }

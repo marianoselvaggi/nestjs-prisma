@@ -7,20 +7,53 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgres"
   url      = env("DATABASE_URL")
 }
 
 model Person {
   id String @id @default(uuid())
+  createdAt DateTime @default(now())
+  updadeAt DateTime @default(now())
   name String
   age Int
   emails Email[]
+  tasks TasksOnPersons[]
+  profile Profile?
+}
+
+model Profile {
+  id String @id @default(uuid())
+  createdAt DateTime @default(now())
+  updadeAt DateTime @default(now())
+  name String
+  person Person @relation(fields: [personId], references: [id])
+  personId String
 }
 
 model Email {
   id String @id @default(uuid())
+  createdAt DateTime @default(now())
+  updadeAt DateTime @default(now())
   email String @unique
   person Person @relation(fields: [personId], references: [id])
   personId String
+}
+
+model Task {
+  id String @id @default(uuid())
+  name String
+  isCompleted Boolean @default(false)
+  createdAt DateTime @default(now())
+  updadeAt DateTime @default(now())
+  persons TasksOnPersons[]
+}
+
+model TasksOnPersons {
+  person Person @relation(fields: [personId],references: [id])
+  personId String
+  task Task @relation(fields: [taskId],references: [id])
+  taskId String
+
+  @@id([personId,taskId])
 }
