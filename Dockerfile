@@ -22,9 +22,6 @@ RUN npx prisma generate
 # Build our app for production
 RUN npm run build
 
-# generate prisma server
-RUN npx prisma generate
-
 # RUN npx prisma migrate dev
 
 EXPOSE 3000
